@@ -1,0 +1,56 @@
+services:
+  access-management-db:
+    image: postgres:16
+    env_file:
+      - ./access-management-api/.env
+    volumes:
+      - access_management_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  access-management-api:
+    build: ./access-management-api
+    volumes:
+      - ./access-management-api:/app
+      - /app/.venv
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./access-management-api/.env
+    depends_on:
+      access-management-db:
+        condition: service_healthy
+
+  get-them-all-db:
+    image: postgres:16
+    env_file:
+      - ./get-them-all-api/.env
+    volumes:
+      - get_them_all_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  get-them-all-api:
+    build: ./get-them-all-api
+    volumes:
+      - ./get-them-all-api:/app
+      - /app/.venv
+    ports:
+      - "8001:8000"
+    env_file:
+      - ./get-them-all-api/.env
+    depends_on:
+      get-them-all-db:
+        condition: service_healthy
+      access-management-api:
+        condition: service_started
+
+volumes:
+  access_management_db_data:
+  get_them_all_db_data:

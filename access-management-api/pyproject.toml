@@ -1,0 +1,69 @@
+[project]
+name = "access-management-api"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "django==6.1.3",
+    "django-environ>=0.14.0",
+    "djangorestframework==3.18.3",
+    "drf-yasg==1.21.18",
+    "psycopg[binary]==3.3.9",
+    "requests==2.34.2",
+]
+
+[dependency-groups]
+dev = [
+    "black>=26.10.1",
+    "isort>=9.0.2",
+    "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
+    "pytest-django>=4.14.0",
+    "ruff>=0.17.5",
+]
+
+[tool.black]
+line-length = 120
+target-version = ["py312"]
+exclude = "(.venv|migrations)"
+skip-string-normalization = true
+
+[tool.isort]
+profile = "black"
+line_length = 120
+known_first_party = ["config", "auth"]
+skip = [".venv", "migrations"]
+
+[tool.ruff]
+exclude = [".venv", "migrations"]
+line-length = 120
+fix = true
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle - erreurs de style
+    "W",   # pycodestyle - warnings de style
+    "F",   # pyflakes - erreurs logiques (imports inutilisés, variables non définies...)
+    "Q",   # flake8-quotes - enforce les singles quotes
+    "DJ",  # flake8-django - règles spécifiques à Django
+    "UP",  # pyupgrade - suggère les syntaxes Python modernes
+    "B",   # flake8-bugbear - détecte les bugs potentiels
+    "C4",  # flake8-comprehensions - optimise les list/dict/set comprehensions
+    "SIM", # flake8-simplify - simplifie le code
+]
+ignore = [
+    "E501", # Longueur de ligne, déjà géré par black
+]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint.per-file-ignores]
+# `from .local_settings import *` overrides DATABASES etc. from an env-based file (see config/local_settings.py)
+"config/settings.py" = ["F403", "F405"]
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "single"
+multiline-quotes = "double"
+docstring-quotes = "double"
